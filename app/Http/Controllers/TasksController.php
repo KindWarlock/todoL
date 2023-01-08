@@ -61,7 +61,7 @@ class TasksController extends Controller
         // Чтобы не потерять введенные данные при неудачной валидации
         session(['form' => request()->all()]);
         $data = request()->validate([
-            'name' => 'required',
+            'name' => ['required', 'max:255'],
             'duration' => ['min:0', 'nullable', 'numeric']
         ]); 
         $data = request()->session()->pull('form');
@@ -96,6 +96,7 @@ class TasksController extends Controller
         $task->save();
         return redirect()->route('tasks.show', ['date' => $date]);
     } 
+
 
     public function edit($date) {
         $data = request()->all();

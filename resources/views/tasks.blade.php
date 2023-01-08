@@ -15,24 +15,10 @@
     <title>ToDo List</title>
 </head>
 <body>
-    @if (Route::has('login'))
-        <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
-            @auth
-                <form action="{{route('logout')}}" method="post">
-                    @csrf
-                    <input type="submit" value="Выйти" class="text-sm text-gray-700 dark:text-gray-500 underline">               
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
-
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
-                @endif
-            @endauth
-        </div>
-    @endif
-    <div id="app">
-        <div class="day">
+    <div class="containter w-75 pt-3 m-auto">
+        <div class="d-flex justify-content-between align-items-center">
+            <div></div>
+            <div class="d-flex flex-column align-items-center">
                 <h1 class="day__date">{{ $date }}</h1>
                 <form action="/tasks" method="get">
                     <input 
@@ -41,85 +27,125 @@
                         type="date" 
                         value={{ $date }}>
                 </form>
-            <div class="day__add-task add-task">
-                <form class="add-task__form" method="POST" action="/tasks/{{$date}}">
+            </div>
+            @auth
+                <form action="{{route('logout')}}" method="post">
+                    @csrf
+
+                    <div class="position-absolute" style="top:25px;">
+                        <div class="text-right">
+                            {{auth()->user()['email']}}
+                        </div>
+                        <input type="submit" value="Выйти" class="btn btn-danger">               
+    
+                    </div>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
+
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
+                @endif
+            @endauth
+            
+        </div>
+            <div class="border row mt-3">
+                <div class="col"></div>
+                <form class=" py-4 col-5" method="POST" action="/tasks/">
+                    <h2 class="text-center">Добавить задачу</h2>
                     @csrf
                     @isset($id)
                         @method('PUT')
-                        <input type="hidden" name="id" value="{{$id}}">
+                        <input type="hidden" name="id" value="{{$id}} class="form-control"">
                     @endisset
-                    <label class="add-task__input">
-                        Название;
-                        <input 
-                            type="text" 
-                            name='name' 
-                            @isset($form)
-                                value='{{$form['name']}}'    
-                            @endisset
-                            @empty($form)
-                                value=''
-                            @endempty>
-                        @error('name')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </label>
-                    <label class="add-task__input">
-                        Тип:
-                        <select 
-                            name='type_id'
-                            @isset($form)
-                                value='{{$form['type_id']}}'    
-                            @endisset
-                            @empty($form)
-                                value='1'    
-                            @endempty>
-                            @foreach ($types as $type)
-                                <option value="{{ $type->id }}"
-                                    @isset($form)
-                                        @if ($form['type_id'] == $type->id)
-                                            selected
-                                        @endif
-                                    @endisset
-                                    >{{ $type->name }}</option>
-                            @endforeach
-                        </select>
-                    </label>
-                    <label class="add-task__input">
-                        Длительность:
-                        <input 
-                            type="number" 
-                            name="duration" 
-                            @isset($form)
-                                value="{{$form['duration']}}"
-                            @endisset
-                            @empty($form)
-                                value="0"
-                            @endempty>
-                        @error('duration')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </label>
-                    <div class="add-task__input">
-                        Приоритет:
-                        <label class="add-task__input">
-                            Высокий
+                    <div class="form-group">
+                        <label class="w-100">
+                            Название
+                            <input 
+                                type="text" 
+                                name='name' 
+                                class="form-control"
+                                @isset($form)
+                                    value='{{$form['name']}}'    
+                                @endisset
+                                @empty($form)
+                                    value=''
+                                @endempty>
+                            @error('name')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </label>
+    
+                    </div>
+                    <div class="form-group">
+                        <label class=" w-100">
+                            Тип
+                            <select 
+                                name='type_id'
+                                class="form-control"
+                                @isset($form)
+                                    value='{{$form['type_id']}}'    
+                                @endisset
+                                @empty($form)
+                                    value='1'    
+                                @endempty>
+                                @foreach ($types as $type)
+                                    <option value="{{ $type->id }}"
+                                        @isset($form)
+                                            @if ($form['type_id'] == $type->id)
+                                                selected
+                                            @endif
+                                        @endisset
+                                        >{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>    
+                    </div>
+                    <div class="form-group">
+                        <label class=" w-100">
+                            Длительность
+                            <input 
+                                type="number" 
+                                name="duration" 
+                                class="form-control"
+                                @isset($form)
+                                    value="{{$form['duration']}}"
+                                @endisset
+                                @empty($form)
+                                    value="0"
+                                @endempty>
+                            @error('duration')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </label>
+    
+                    </div>
+                    <div class="form-group text-center">
+                        Приоритет
+                        <div class="form-check">
                             <input 
                                 type="radio" 
                                 name="prio" 
                                 value="1"
+                                class="form-check-input" 
+                                id="high_prio"
                                 @isset($form)
                                     @if ($form['prio'])
                                         checked
                                     @endif
                                 @endisset
                                 >
-                        </label>
-                        <label class="add-task__input">
-                            Низкий
+                            <label class="form-check-label" for="high_prio">
+                                Высокий
+                            </label>    
+                        </div>
+                        <div class="form-check">
                             <input 
                                 type="radio" 
                                 name="prio" 
                                 value="0" 
+                                class="form-check-input" 
+                                id="low_prio"
                                 @isset($form)
                                     @if (!$form['prio'])
                                         checked
@@ -128,13 +154,19 @@
                                 @empty($form)
                                     checked
                                 @endempty
-                                
                                 >
-                        </label>
+
+                            <label class="form-check-label" for="low_prio">
+                                Низкий
+                            </label>    
+
+                        </div>
+    
                     </div>
-                    <input 
+                    <div class="text-center">
+                        <input 
                         type="submit" 
-                        class="add-task__button"
+                        class="btn btn-primary"
                         @isset($id)
                             value="Редактировать задачу"
                         @endisset 
@@ -142,17 +174,26 @@
                             value="Добавить задачу"                            
                         @endempty
                         >
+                        <a href="{{url()->previous()}}" class="btn btn-secondary">
+                            Отмена
+                        </a>
+
+                    </div>
                 </form>
-                
-                <button onClick="clearForm" class="add-task__button">
-                    Отмена
-                </button>
-                
+                <div class="col"></div>
             </div>
             <div class="day__tasks tasks">
-                <table class="tasks__table" id="tasks-table">
+                <table class="tasks__table table" id="tasks-table">
+                    <tr scope="row" class="tasks__tr">
+                        <th></th>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Длительность (мин.)</th>
+                        <th>Выполнено</th>
+                        <th></th>
+                    </tr>
                     @foreach ($tasks_current as $task)
-                        <tr class="tasks__tr">
+                        <tr scope="row" class="tasks__tr">
                             <td class="tasks__td">
                                 @if ($task->prio)
                                 <span class="tasks__prio">*</span>
@@ -173,7 +214,7 @@
                             <td class="tasks__td">
                                 <form action="/tasks/{{ $date }}/edit" method="get">
                                     <input hidden name="id" value="{{ $task->id }}">
-                                    <input type="submit" value="Ред"> 
+                                    <input type="submit" value="Ред" class="btn btn-outline-primary btn-sm"> 
                                 </form>
                             </td>
                         </tr>
@@ -183,7 +224,7 @@
                         <td class="tasks__duration"></td>
                         <td class="tasks__duration"></td>
                         <td class="tasks__duration"></td>
-                        <td class="tasks__duration">Длительность: 
+                        <td class="tasks__duration">Общ. длительность: 
                             {{ $duration }}
                         </td>
                         <td class="tasks__duration"></td>
@@ -191,9 +232,17 @@
                     </tr>
                 </table>
                 <hr>
-                <table class="tasks__table tasks__table_done" id="tasks-table">
+                <table class="tasks__table table" id="tasks-table">
+                    <tr scope="row" class="tasks__tr">
+                        <th></th>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Длительность (мин.)</th>
+                        <th>Выполнено</th>
+                        <th></th>
+                    </tr>
                     @foreach ($tasks_done as $task)
-                        <tr class="tasks__tr">
+                        <tr scope="row" class="tasks__tr">
                             <td class="tasks__td">
                                 @if ($task->prio)
                                 <span class="tasks__prio">*</span>
@@ -212,30 +261,17 @@
                                 </form>
                             </td>
                             <td class="tasks__td">
-                                <button onClick="editTask" name="{{$task->id}}"> ... </button>
+                                <form action="/tasks/{{ $date }}/edit" method="get">
+                                    <input hidden name="id" value="{{ $task->id }}">
+                                    <input type="submit" value="Ред" class="btn btn-outline-primary btn-sm"> 
+                                </form>
                             </td>
                         </tr>
                     @endforeach
                 </table>
-                {{--
-                <table class="tasks__table tasks__done" id="tasks-table">
-                    <template v-for="task in tasks">
-                        <tr class="tasks__tr" v-if="task.isDone">
-                            <td class="tasks__td">
-                                <span class="tasks__prio" v-if="task.prio">*</span>
-                            </td>
-                            <td class="tasks__td">{{ task.name }}</td>
-                            <td class="tasks__td">{{ task.type }}</td>
-                            <td class="tasks__td">{{ task.duration }}</td>
-                            <td class="tasks__td">
-                                <input type="checkbox" v-model="task.isDone">
-                            </td>
-                        </tr>
-                    </template>
-                </table>--}}
-            </div>
-        </div>
+            </div>       
     </div>
+
 
     <script src="js/main.js"></script>
 </body>
