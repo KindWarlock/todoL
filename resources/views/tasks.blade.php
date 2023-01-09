@@ -103,7 +103,7 @@
                     </div>
                     <div class="form-group">
                         <label class=" w-100">
-                            Длительность
+                            Длительность (мин.)
                             <input 
                                 type="number" 
                                 name="duration" 
