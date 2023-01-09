@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Events\TasksIndexPageLoaded;
 
 
 class TasksController extends Controller
@@ -18,6 +19,9 @@ class TasksController extends Controller
         } else {
             $curr_date = date('Y-m-d');
         }
+
+        TasksIndexPageLoaded::dispatch($curr_date);
+
         return redirect()->route('tasks.show', ['date' => $curr_date]);
     }
 
@@ -44,7 +48,7 @@ class TasksController extends Controller
         }
         
 
-        session(['date' => $date]);
+        //session(['date' => $date]);
 
         return view('tasks', ['tasks_current'=>$tasks_current, 
             'tasks_done'=>$tasks_done,
@@ -88,7 +92,7 @@ class TasksController extends Controller
             $task->is_done = $data['is_done'] == 'on' ? 1 : 0;
         // ... или если редактируем полностью
         } else {
-            $task->name = $data['name']; 
+            $task-> name = $data['name']; 
             $task-> type_id = $data['type_id'];
             $task-> duration = $data['duration'];
             $task-> prio = $data['prio'];
